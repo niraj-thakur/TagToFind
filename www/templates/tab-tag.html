@@ -4,17 +4,17 @@
 		<div class="item item-divider">
 		Vehicle
 		</div>
-			<a class="item item-icon-left" href="#/tab/tag/11"> <i class="icon ion-android-car"></i>Car</a>
-			<a class="item item-icon-left" href="#/tab/tag/12"><i class="icon ion-android-bicycle"></i>Bike</a>
-			<a class="item item-icon-left" href="#/tab/tag/13"><i class="icon ion-android-bicycle"></i>Bicycle</a>
-			<a class="item item-icon-left" href="#/tab/tag/14"><i class="icon ion-android-bus"></i>Others</a>
+			<a class="item item-icon-left" ng-click="openTag(1,'Car')"> 	<i class="icon ion-android-car"></i>Car</a>
+			<a class="item item-icon-left" ng-click="openTag(1,'Bike')" >	<i class="icon ion-android-bicycle"></i>Bike</a>
+			<a class="item item-icon-left" ng-click="openTag(1,'Bicycle')">	<i class="icon ion-android-bicycle"></i>Bicycle</a>
+			<a class="item item-icon-left" ng-click="openTag(1,'Other vehicle')"><i class="icon ion-android-bus"></i>Other vehicle</a>
 			
 		<div class="item item-divider">
 		Place
 		</div>
-			<a class="item item-icon-left" href="#/tab/tag/21"><i class="icon ion-person-stalker"></i>Friend</a>
-			<a class="item item-icon-left" href="#/tab/tag/22"><i class="icon ion-android-contacts"></i>Relative</a>
-			<a class="item item-icon-left" href="#/tab/tag/23"><i class="icon ion-android-walk"></i>Others</a>
+			<a class="item item-icon-left" ng-click="openTag(2,'Friend')" >		<i class="icon ion-person-stalker"></i>Friend</a>
+			<a class="item item-icon-left" ng-click="openTag(2,'Relative')" >	<i class="icon ion-android-contacts"></i>Relative</a>
+			<a class="item item-icon-left" ng-click="openTag(2,'Miscellaneous')"><i class="icon ion-android-walk"></i>Miscellaneous</a>
 	</div>
   </ion-content>
 </ion-view>
