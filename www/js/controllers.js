@@ -1,8 +1,9 @@
 angular.module('starter.controllers', [])
 
-.controller('TagCtrl',[ '$scope','$stateParams','$ionicModal',function($scope,$stateParams,$ionicModal) {
-	$scope.tag = {};
-	
+.controller('TagCtrl',[ '$scope','$stateParams','$ionicModal','$cordovaGeolocation',function($scope,$stateParams,$ionicModal,$cordovaGeolocation) {
+	$scope.tag = {id:"",type:"",name:"",location:""};
+	$scope.tagArray = [];
+	$scope.posOptions = {timeout: 10000, enableHighAccuracy: false};
 	//Create the tag modal that will use later.
 	$ionicModal.fromTemplateUrl('templates/tag-modal.html',{
 		scope:$scope
@@ -35,7 +36,20 @@ angular.module('starter.controllers', [])
 	//Perform the doTag action.
 	$scope.doTag = function(){
 		
+		$cordovaGeolocation
+			.getCurrentPosition($scope.posOptions)
+			.then(function (position) {
+					$scope.location.lat  = position.coords.latitude
+					$scope.location.long = position.coords.longitude
+				}, function(err) {
+					// error
+			});
+		console.log("Before:" + $scope.tag);
 		console.log($scope.tag);
+		$scope.tagArray.push($scope.tag);
+		$scope.tag= {id:"",type:"",name:"",location:""};
+		console.log("After:" + $scope.tag);
+		console.log($scope.tagArray);
 		$scope.closeTag();
 	}
 	
