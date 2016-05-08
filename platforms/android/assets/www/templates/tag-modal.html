@@ -1,0 +1,25 @@
+<ion-modal-view>
+	<ion-header-bar>
+	<h1 class="title">Tag the {{tag.type}}</h1>
+	<div class="buttons">
+		<button class="button button-clear" ng-click="closeTag()">Close</button>
+	</div>
+	</ion-header-bar>
+	<ion-content>
+		<form id="reserveForm" name="tagForm" ng-submit="doTag()">
+			<div class="list">
+			<label class="item item-input" ng-if="showPlace">
+				
+				<input type="text" ng-model="tag.name" placeholder="Where are you now">
+			</label>
+			<label class="item item-input" ng-if="showRelativeName">
+				
+				<input type="text" ng-model="tag.name" placeholder="Enter {{tag.type}} Name">
+			</label>
+		<label class="item">
+          <button class="button button-block button-positive" type="submit">Tag</button>
+        </label>
+			</div>
+		</form>
+	</ion-content>
+</ion-modal-view>

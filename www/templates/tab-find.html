@@ -1,5 +1,14 @@
 <ion-view view-title="Find">
   <ion-content>
-    <h2 class="tab-font">OOps no Tag to Find...</h2>
+     <div ng-if="!showTags">
+       <h2 class="tab-font">{{message}}</h2>
+      </div>
+     
+      <div class="list" ng-if="showTags">
+         
+            <a class="item item-icon-left" ng-repeat="tag in tags" href="#"> <i class="icon {{tag.icon}}"></i>{{tag.type}} - {{tag.name}}</a>
+          
+       
+      </div>
   </ion-content>
 </ion-view>

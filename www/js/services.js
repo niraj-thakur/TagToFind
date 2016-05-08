@@ -1,5 +1,18 @@
 angular.module('starter.services', [])
 
+.factory('TagFactory',function(){
+  var tags = [];
+    return{
+       getTags : function(){
+           return tags;
+       },
+        
+        pushTags : function(tag){
+            tags.push(tag);
+        }
+    };
+})
+
 .factory('Chats', function() {
   // Might use a resource here that returns a JSON array
 
