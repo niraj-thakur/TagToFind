@@ -59,7 +59,7 @@ angular.module('starter.controllers', [])
 	
 }])
 
-.controller('FindCtrl', ['$scope','TagFactory',function($scope,TagFactory ) {
+.controller('FindCtrl', ['$scope','TagFactory','$ionicModal',function($scope,TagFactory,$ionicModal ) {
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
   // To listen for when this page is active (for example, to refresh data),
@@ -69,7 +69,7 @@ angular.module('starter.controllers', [])
       
       $scope.checkFind();
   });
-    
+   $scope.tag = {id:"",type:"",name:"",location:""}; 
    $scope.showTags = false;
     $scope.message = "Loading...";
      $scope.tags = TagFactory.getTags();
@@ -85,7 +85,52 @@ angular.module('starter.controllers', [])
         }
     }
   
-    
+    //Create the map modal that will use later.
+	$ionicModal.fromTemplateUrl('templates/find-map.html',{
+		scope:$scope
+	}).then(function(modal){
+		$scope.mapForm = modal;
+	});
+	
+	//Triggered in the map modal to close it.
+	$scope.closeMap = function(){
+		$scope.mapForm.hide();
+	}
+	
+	//Show map function
+	var mapShow = function(lat,long){
+	
+		
+        var myLatlng = new google.maps.LatLng(lat,long);
+		
+        var mapOptions = {
+          center: myLatlng,
+          zoom: 16,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+		var mapDiv = document.getElementById("map");
+        var map = new google.maps.Map(mapDiv,
+            mapOptions);
+			
+		
+		var marker=new google.maps.Marker({
+		position:myLatlng,
+			});
+
+		marker.setMap(map);
+	}
+	$scope.iframeHeight = window.innerHeight;
+	$scope.iframeWidth = window.innerWidth;
+			
+	//Open the Tag modal.
+	
+	$scope.findInMap = function(tag){
+		$scope.tag = tag;
+		$scope.mapForm.show();
+		mapShow(tag.location.lat , tag.location.long);
+		
+		
+	}
    
  
 }])

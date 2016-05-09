@@ -1,7 +1,7 @@
 angular.module('starter.services', [])
 
 .factory('TagFactory',function(){
-  var tags = [];
+  var tags = [{id:"1",type:"Car",name:"Cricket",location:{lat:"18.5171",long:"73.9245"},icon:"ion-android-car"}];
     return{
        getTags : function(){
            return tags;
