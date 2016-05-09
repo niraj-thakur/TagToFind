@@ -6,7 +6,7 @@
      
       <div class="list" ng-if="showTags">
          
-            <a class="item item-icon-left" ng-repeat="tag in tags" ng-click="findInMap(tag)"> <i class="icon {{tag.icon}}"></i>{{tag.type}} - {{tag.name}}</a>
+            <a class="item item-icon-left" ng-repeat="tag in tags" ng-click="findInMap(tag)"> <i class="icon {{tag.icon}}"></i>{{tag.type}} - {{tag.name}} {{tag.location}}</a>
           
        
       </div>

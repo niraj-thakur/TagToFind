@@ -1,9 +1,9 @@
 angular.module('starter.controllers', [])
 
-.controller('TagCtrl',[ '$scope','$state','$stateParams','$ionicModal','TagFactory','$cordovaGeolocation',function($scope,$state,$stateParams,$ionicModal,TagFactory,$cordovaGeolocation) {
-	$scope.tag = {id:"",type:"",name:"",location:""};
+.controller('TagCtrl',[ '$scope','$state','$stateParams','$ionicModal','$ionicLoading','$ionicPlatform','TagFactory','$cordovaGeolocation',function($scope,$state,$stateParams,$ionicModal,$ionicLoading,$ionicPlatform,TagFactory,$cordovaGeolocation) {
+	$scope.tag = {id:"",type:"",name:"",location:{}};
 	
-	$scope.posOptions = {timeout: 10000, enableHighAccuracy: false};
+	
 	//Create the tag modal that will use later.
 	$ionicModal.fromTemplateUrl('templates/tag-modal.html',{
 		scope:$scope
@@ -37,24 +37,38 @@ angular.module('starter.controllers', [])
 	//Perform the doTag action.
 	$scope.doTag = function(){
 		
+		 $ionicPlatform.ready(function() {
+             
+              $ionicLoading.show({
+            template: '<ion-spinner icon="bubbles"></ion-spinner><br/>Acquiring location!'
+             });
+         
+                var posOptions = {
+                    enableHighAccuracy: true,
+                    timeout: 20000,
+                    maximumAge: 0
+                };
+             
+         $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+             $scope.tag.location.lat  = position.coords.latitude;
+            $scope.tag.location.long = position.coords.longitude;
+             $ionicLoading.hide();
+             
+           	
+		      TagFactory.pushTags($scope.tag);
+		      $scope.tag= {id:"",type:"",name:"",location:{}};
 		
-        $cordovaGeolocation
-			.getCurrentPosition($scope.posOptions)
-			.then(function (position) {
-					$scope.location.lat  = position.coords.latitude
-					$scope.location.long = position.coords.longitude
-				}, function(err) {
-					// error
-			});
+		      $scope.closeTag();
+                }, function(err) {
+                        $ionicLoading.hide();
+                        $scope.tag.location = {error:"location error"};
+                        $scope.closeTag();
+                });
+         })
+   
             
             
-		console.log("Before:" + $scope.tag);
-		console.log($scope.tag);
-		TagFactory.pushTags($scope.tag);
-		$scope.tag= {id:"",type:"",name:"",location:""};
-		console.log("After:" + $scope.tag);
-		console.log(TagFactory.getTags());
-		$scope.closeTag();
+		
 	}
 	
 }])
