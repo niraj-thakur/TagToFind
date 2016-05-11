@@ -50,24 +50,25 @@ angular.module('starter.controllers', [])
                 };
              
          $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
-            $scope.tag.location.lat  = position.coords.latitude;
+             $scope.tag.location.lat  = position.coords.latitude;
             $scope.tag.location.long = position.coords.longitude;
              $ionicLoading.hide();
+             
+           	
+		      TagFactory.pushTags($scope.tag);
+		      $scope.tag= {id:"",type:"",name:"",location:{}};
+		
+		      $scope.closeTag();
                 }, function(err) {
                         $ionicLoading.hide();
-                        console.log(err);
+                        $scope.tag.location = {error:"location error"};
+                        $scope.closeTag();
                 });
          })
    
             
             
-		console.log("Before:" + $scope.tag);
-		console.log($scope.tag);
-		TagFactory.pushTags($scope.tag);
-		$scope.tag= {id:"",type:"",name:"",location:""};
-		console.log("After:" + $scope.tag);
-		console.log(TagFactory.getTags());
-		$scope.closeTag();
+		
 	}
 	
 }])
@@ -140,7 +141,7 @@ angular.module('starter.controllers', [])
 	$scope.findInMap = function(tag){
 		$scope.tag = tag;
 		$scope.mapForm.show();
-		mapShow(parseInt(tag.location.lat,10) , parseInt(tag.location.long,10));
+		mapShow(tag.location.lat , tag.location.long);
 		
 		
 	}

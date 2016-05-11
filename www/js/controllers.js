@@ -79,6 +79,7 @@ angular.module('starter.controllers', [])
   // To listen for when this page is active (for example, to refresh data),
   // listen for the $ionicView.enter event:
   //
+  $scope.mapHeading = "Google Map";
   $scope.$on('$ionicView.enter', function(e) {
       
       $scope.checkFind();
@@ -112,37 +113,71 @@ angular.module('starter.controllers', [])
 	}
 	
 	//Show map function
-	var mapShow = function(lat,long){
+	var directionsDisplay = new google.maps.DirectionsRenderer();;
+	var directionService = new google.maps.DirectionsService();
+	var directionsLatLng;
+	var directionsLat;
+	var directionsLong;
+	var currentPosOptions;
+	var directionsMap;
+	var start;
+	var end;
 	
-		
-        var myLatlng = new google.maps.LatLng(lat,long);
-		
-        var mapOptions = {
-          center: myLatlng,
-          zoom: 16,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-		var mapDiv = document.getElementById("map");
-        var map = new google.maps.Map(mapDiv,
-            mapOptions);
-			
-		
-		var marker=new google.maps.Marker({
-		position:myLatlng,
-			});
+	function currentLocation(){
+	
+		currentPosOptions = {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                };
+		$cordovaGeolocation.getCurrentPosition(currentPosOptions).then(function (position) {
+            directionsLat  = position.coords.latitude;
+            directionsLong = position.coords.longitude;	
 
-		marker.setMap(map);
+				directionsLatLng = new google.maps.LatLng(directionsLat,directionsLong);
+				
+                }, function(err) {
+                        console.log("error in currentLocation function");
+                });
+		
 	}
+	
+	function getDirections(){
+		
+		
+		//start = new google.maps.LatLng(directionsLatLng);
+		var mapOptions = {
+			zoom:7,
+			center:start
+		};
+		directionsMap = new google.maps.Map(document.getElementById("map"),mapOptions);
+		directionsDisplay.setMap(directionsMap);
+	}
+	
+		function calcRoute(pos,node) {
+		var directionsService = new google.maps.DirectionsService();
+		var request = {
+			origin:pos,
+			destination:node,
+			travelMode: google.maps.DirectionsTravelMode.DRIVING
+			};
+
+		directionsService.route(request, function(response, status) {
+					if (status == google.maps.DirectionsStatus.OK) {
+							directionsDisplay.setDirections(response);
+					} else { alert("Directions failed: "+status); }
+				});
+		}
 	$scope.iframeHeight = window.innerHeight;
 	$scope.iframeWidth = window.innerWidth;
 			
 	//Open the Tag modal.
 	
 	$scope.findInMap = function(tag){
-		$scope.tag = tag;
+		$scope.mapHeading += " - " + tag.name;
 		$scope.mapForm.show();
-		mapShow(tag.location.lat , tag.location.long);
-		
+		//mapShow(tag.location.lat , tag.location.long, tag.name);
+		calcRoute();
 		
 	}
    
