@@ -73,7 +73,7 @@ angular.module('starter.controllers', [])
 	
 }])
 
-.controller('FindCtrl', ['$scope','TagFactory','$ionicModal',function($scope,TagFactory,$ionicModal ) {
+.controller('FindCtrl', ['$scope','$ionicPlatform','TagFactory','$ionicModal','$cordovaGeolocation',function($scope,$ionicPlatform,TagFactory,$ionicModal,$cordovaGeolocation ) {
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
   // To listen for when this page is active (for example, to refresh data),
@@ -112,62 +112,43 @@ angular.module('starter.controllers', [])
 		$scope.mapForm.hide();
 	}
 	
-	//Show map function
-	var directionsDisplay = new google.maps.DirectionsRenderer();;
-	var directionService = new google.maps.DirectionsService();
-	var directionsLatLng;
-	var directionsLat;
-	var directionsLong;
-	var currentPosOptions;
-	var directionsMap;
-	var start;
-	var end;
-	
-	function currentLocation(){
-	
-		currentPosOptions = {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                };
-		$cordovaGeolocation.getCurrentPosition(currentPosOptions).then(function (position) {
-            directionsLat  = position.coords.latitude;
-            directionsLong = position.coords.longitude;	
-
-				directionsLatLng = new google.maps.LatLng(directionsLat,directionsLong);
-				
-                }, function(err) {
-                        console.log("error in currentLocation function");
-                });
-		
-	}
-	
-	function getDirections(){
-		
-		
-		//start = new google.maps.LatLng(directionsLatLng);
-		var mapOptions = {
-			zoom:7,
-			center:start
-		};
-		directionsMap = new google.maps.Map(document.getElementById("map"),mapOptions);
-		directionsDisplay.setMap(directionsMap);
-	}
-	
-		function calcRoute(pos,node) {
-		var directionsService = new google.maps.DirectionsService();
-		var request = {
-			origin:pos,
-			destination:node,
-			travelMode: google.maps.DirectionsTravelMode.DRIVING
-			};
-
-		directionsService.route(request, function(response, status) {
-					if (status == google.maps.DirectionsStatus.OK) {
-							directionsDisplay.setDirections(response);
-					} else { alert("Directions failed: "+status); }
+		$ionicPlatform.ready(function() {
+					// Map 
+		function initMap(startLat,startLng,endLat,endLng,name) {
+			
+			var start = {lat:startLat , lng:startLng}
+			var end = {lat: parseFloat(endLat), lng: parseFloat(endLng)};
+			console.log("Outside the geolocation" + startLat +" " +  startLng);
+			var map = new google.maps.Map(document.getElementById('map'), {
+				center: start,
+				scrollwheel: true,
+				zoom: 7
 				});
-		}
+
+				var directionsDisplay = new google.maps.DirectionsRenderer({
+					map: map
+				});
+			
+			// Set destination, origin and travel mode.
+			var request = {
+			destination: end,
+			origin: start,
+			travelMode: google.maps.TravelMode.DRIVING
+			};
+			
+			//Attaching the event 
+			
+			// Pass the directions request to the directions service.
+				var directionsService = new google.maps.DirectionsService();
+				directionsService.route(request, function(response, status) {
+					if (status == google.maps.DirectionsStatus.OK) {
+			// Display the route on the map.
+			directionsDisplay.setDirections(response);
+			}
+		});
+	}
+		
+	
 	$scope.iframeHeight = window.innerHeight;
 	$scope.iframeWidth = window.innerWidth;
 			
@@ -176,10 +157,28 @@ angular.module('starter.controllers', [])
 	$scope.findInMap = function(tag){
 		$scope.mapHeading += " - " + tag.name;
 		$scope.mapForm.show();
-		//mapShow(tag.location.lat , tag.location.long, tag.name);
-		calcRoute();
+		var start;
+			var currentPosOptions = {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                };
+			$cordovaGeolocation.getCurrentPosition(currentPosOptions).then(function (position) {
+				
+				start = {lat: parseFloat(position.coords.latitude), lng: parseFloat(position.coords.longitude)};
+				console.log("Inside the geolocation" + start.lat +" " +  start.lng);
+				initMap( start.lat,start.lng, tag.location.lat,tag.location.long ,tag.name);
+                }, function(err) {
+                        console.log("error in currentLocation function");
+                });
+		
+		
 		
 	}
+		
+		});
+	
+	
    
  
 }])
